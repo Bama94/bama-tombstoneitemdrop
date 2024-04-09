@@ -74,7 +74,7 @@ local function ServerSideObjectSpawn(Player, coords, stashId)
 
 
     FreezeEntityPosition(entityId, true)
-    TriggerClientEvent('bama-tombstoneitemdrop:client:syncDeathProp', -1)
+    TriggerClientEvent('bama-tombstoneitemdrop:client:syncEntity', -1)
     tombstoneTimer(entities[networkId])
 end
 
