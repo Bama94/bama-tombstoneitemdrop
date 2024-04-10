@@ -24,7 +24,7 @@ local function DeleteStash(stashId, source)
 end
 
 -- Registers when someone has opened the inventory and if the inventory is empty and if it is, then delete the stash and the entity
-RegisterNetEvent('bama-tombstoneitemdrop:server:SaveInventory', function (type, id)
+RegisterNetEvent('inventory:server:SaveInventory', function (type, id)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local result = string.match(id, "(%a+)")

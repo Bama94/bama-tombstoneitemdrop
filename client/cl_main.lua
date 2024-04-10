@@ -16,8 +16,8 @@ RegisterNetEvent('bama-tombstoneitemdrop:client:syncEntity', function ()
                         icon = Config.DeathGrave.targetIcon,
                         label = Config.DeathGrave.targetLabel,
                         action = function (targetEntity)
-                            TriggerServerEvent('bama-tombstoneitemdrop:server:OpenInventory', 'stash', v.stashId)
-                            TriggerEvent('bama-tombstoneitemdrop:client:SetCurrentStash', v.stashId)
+                            TriggerServerEvent('inventory:server:OpenInventory', 'stash', v.stashId)
+                            TriggerEvent('inventory:client:SetCurrentStash', v.stashId)
                             TriggerServerEvent('bama-tombstoneitemdrop:server:SetCurrentTombstone', ObjToNet(targetEntity))
                         end,
                     }
