@@ -54,7 +54,6 @@ local function tombstoneTimer(tombstone)
             end
             if timer[tombstone.id] > 0 then
                 timer[tombstone.id] = timer[tombstone.id] - 1
-                print(timer[tombstone.id])
             else
                 DeleteStash(tombstone.stashId)
                 DeleteEntity(tombstone.id)
@@ -69,12 +68,12 @@ end
 local function ServerSideObjectSpawn(Player, coords, stashId)
     local entityId = CreateObjectNoOffset(Config.DeathGrave.prop, coords.x, coords.y, coords.z - 0.98, true, true, false)
     local networkId = NetworkGetNetworkIdFromEntity(entityId)
-    entities[networkId] = {player = Player, coords, id = entityId, stashId = stashId}
+    entities[networkId] = {player = Player, coords = coords, id = entityId, stashId = stashId}
     
 
 
     FreezeEntityPosition(entityId, true)
-    TriggerClientEvent('bama-tombstoneitemdrop:client:syncEntity', -1)
+    TriggerClientEvent('bama-tombstoneitemdrop:client:syncEntity', -1, entities)
     tombstoneTimer(entities[networkId])
 end
 
@@ -123,21 +122,23 @@ local function DropItems(Player)
     end
     alreadySubtracted = {}
 
-    local stashId
-    local tombstoneID
-    if not inventory[Player.PlayerData.citizenid] then
-        tombstoneID = 1
-        stashId = 'tombstone_'..Player.PlayerData.citizenid
-    else
-        tombstoneID = inventory[Player.PlayerData.citizenid] + 1
-        stashId = 'tombstone'..tombstoneID..'_'..Player.PlayerData.citizenid
-
+    if inventoryData and next(inventoryData) then
+        local stashId
+        local tombstoneID
+        if not inventory[Player.PlayerData.citizenid] then
+            tombstoneID = 1
+            stashId = 'tombstone_'..Player.PlayerData.citizenid
+        else
+            tombstoneID = inventory[Player.PlayerData.citizenid] + 1
+            stashId = 'tombstone'..tombstoneID..'_'..Player.PlayerData.citizenid
+    
+        end
+        if Config.Debug then print('DEBUG: StashID: '..stashId..' TombstoneID: '..tombstoneID..' InventoryData: '..inventoryData) end
+        if stashId and type(stashId) == 'string' and tombstoneID and type(tombstoneID) == 'number' then inventory[Player.PlayerData.citizenid] = tombstoneID else return end
+    
+        ServerSideObjectSpawn(Player, coords, stashId)
+        SaveStash(stashId, inventoryData)
     end
-    if Config.Debug then print('DEBUG: StashID: '..stashId..' TombstoneID: '..tombstoneID..' InventoryData: '..inventoryData) end
-    if stashId and type(stashId) == 'string' and tombstoneID and type(tombstoneID) == 'number' then inventory[Player.PlayerData.citizenid] = tombstoneID else return end
-
-    ServerSideObjectSpawn(Player, coords, stashId)
-    SaveStash(stashId, inventoryData)
 end
 
 -- The Event that when triggers starts the Tombstone being created
@@ -167,6 +168,15 @@ if Config.DeathGrave.deathEvent == 'respawn' then
         if Player then DropItems(Player) end
     end)
 end
+
+RegisterNetEvent('bama-tombstoneitemdrop:server:syncTarget', function ()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local newPlayerEntities
+
+    newPlayerEntities = entities
+    TriggerClientEvent('bama-tombstoneitemdrop:client:syncEntity', src, newPlayerEntities)
+end)
 
 -- Only needed to find out what tombstone a player is targeting so when they empty the tombstone, itll delete it.
 RegisterNetEvent('bama-tombstoneitemdrop:server:SetCurrentTombstone', function (removeEntity)

@@ -6,7 +6,7 @@ Config.DeathGrave  = {
     prop = 'm23_1_prop_m31_gravestones_02a',
     targetIcon = '',
     targetLabel = 'Grave Loot',
-    deathEvent = 'respawn' -- onSide(will spawn tombstone upon player going on their side) | onBack(spawn tombstone upon player going on their back) | respawn(spawn tombstone upon player respawning at hospital/bed)
+    deathEvent = 'onBack' -- onSide(will spawn tombstone upon player going on their side) | onBack(spawn tombstone upon player going on their back) | respawn(spawn tombstone upon player respawning at hospital/bed)
 
 }
 Config.BlacklistTombstoneItems = { -- These items wont be removed upon death
