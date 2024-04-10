@@ -54,7 +54,6 @@ local function tombstoneTimer(tombstone)
             end
             if timer[tombstone.id] > 0 then
                 timer[tombstone.id] = timer[tombstone.id] - 1
-                print(timer[tombstone.id])
             else
                 DeleteStash(tombstone.stashId)
                 DeleteEntity(tombstone.id)
